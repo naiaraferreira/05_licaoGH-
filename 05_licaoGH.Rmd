@@ -1,0 +1,156 @@
+---
+title: "Lição n° 5 GitHub"
+subtitle: " Construindo gráficos com ggplot2"
+author: "Naiara Ferrreira de Jesus"
+date : "06/09/2021"
+output:
+  html_notebook:
+    toc: yes
+    toc_float: yes
+    highlight: tango
+  html_document:
+    toc: yes
+    df_print: paged
+---
+
+
+---
+
+## Introdução
+
+Irei analisar alguns conjutos de dados para a contrução de gráficos. Os *datasets* utilizados são :`dados_mpg` ,`co2_tidy` e `titanic`.
+
+ carregando os pacotes
+```{r}
+library(tidyverse)
+
+library(scales)
+```
+
+
+
+## 1. Gráfico de Pontos
+
+O *dataset* usado, é o `dados_mpg`, para observarmos as cilindradas e tração por  de milhas por galão nas cidades.
+
+```{r}
+# Lendo conjunto de dados " milhas_por_galão.csv"
+dados_mpg <-read.csv("dados/milhas_por_galao.csv")
+```
+
+
+```{r}
+ggplot(data = dados_mpg) +
+  aes(x = cilindrada, y = cidade) +
+  geom_point(size = 2, aes(color = tracao))+
+  theme_bw()
+```
+O carros com cilindradas e que passaram em ao menos 20 cidades possuem tração 4x4,enqanto alguns carros de traçao dianteira (d) rodaram em mais de 30 cidades.Os carros de traçao traseira (t) que  tem cilindradas de 4 at é o 7,mesmo sendo maiores rodaram poucas cidades.
+## 2. Gráfico de linhas
+
+O *dataset* usado é o `co2_tidy`, onde iremos observar a média de CO2 dentre desse período de 1959 até 1997.
+
+```{r}
+# Lendo conjunto de dados "co2_tidy.csv"
+co2_tidy <- read.csv("dados/co2_tidy.csv")
+```
+
+```{r}
+mpa <-co2_tidy %>%
+  group_by(ano) %>%
+  summarise(
+    media_ppm = round(mean(ppm),1)
+  )
+mpa %>% 
+  ggplot(aes(x = ano, y = media_ppm, group = 1)) +
+  geom_line(color = "#5833FF", size = 1) +
+  labs(
+    title = "Gráfico de Linhas ",
+    x = "Ano",
+    y = "Média por ano"
+  ) +
+  theme_minimal()
+```
+
+ Com o passar dos anos dentro desse príodo,a média ppm não teve diminuição significativa,mantendo-se de forma crescente.
+ 
+
+## 3. Gráfico  de Barras
+O *dataset* usado é o `dados_mpg`: Vamos observar as porcentagens de trasmissões dos carros
+ 
+```{r}
+dados_mpg %>% 
+  count(transmissao) %>% 
+  mutate(prop = n / sum(n)) %>% 
+  ggplot() +
+  aes(x = prop, y = fct_reorder(transmissao, prop),fill = transmissao) +
+  geom_col() +
+  scale_fill_viridis_d() +
+  scale_x_continuous(
+    labels = label_percent(accuracy = 1), 
+    limits = c(0, .3)
+  ) +
+  labs(
+    title = "Porcentagem de transmissões dos Carros",
+    x = "",
+    y = ""
+  ) +
+  theme_minimal()
+```
+ Os carros com trasmissões automáticas possuem porcentagens bem baixas,em relação as manuais, tendo apenas a transmissão auto(15) passa dos 10% dos carros.
+
+## 4. Gráfico Histograma
+
+O *dataset* usado é o `dados_mpg`:
+ 
+```{r}
+dados_mpg %>%
+  ggplot() +
+  aes(x = cilindrada) +
+  geom_histogram(fill = "yellow", color = "black", binwidth = 0.5) +
+  labs(
+    title = "Histograma das cilindradas dos carros",
+    x = "cilindradas",
+    y = ""
+  ) +
+  theme_minimal()
+
+```
+
+A quantidade de carros com cilindradas de 1 até seis é bem superior dos que possuem cilindradas maiores que seis. 
+
+## 5. Gráfico de Densidade
+ 
+O *dataset* usado é o`titanic` : Vamos observar a concentração de idades que os passageiros possuiam
+```{r}
+# Lendo conjunto de dados "titanic.csv"
+titanic <-read.csv("dados/titanic.csv")
+```
+
+
+```{r}
+titanic%>% 
+  ggplot() +
+  aes(x = idade) +
+  geom_density(fill = "#404080") +
+ 
+  theme_minimal() 
+  
+```
+A  maior concentração de idade  está entre de 20 a 30 anos, sendo assim as idades de grande parte dos passageiros.
+
+## 6. Boxplot
+
+O *dataset* usado é o`titanic` : Onde iremos observar o sexo e a idades dos sobrevinetes e não sobreviventes
+
+```{r}
+titanic %>%
+  ggplot() +
+  aes(x= sobreviveu, y = idade, fill= sexo) +
+  geom_boxplot() +
+  scale_fill_viridis_d()+
+  
+  theme_minimal()
+```
+Podemos observar que os as pessoas com 60 anos ou mais que não sobreviveram foram do sexo masculino, onde está constando idades muito distantes das outras observadas.
+
