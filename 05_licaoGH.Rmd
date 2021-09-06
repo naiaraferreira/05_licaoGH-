@@ -46,6 +46,7 @@ ggplot(data = dados_mpg) +
   theme_bw()
 ```
 O carros com cilindradas e que passaram em ao menos 20 cidades possuem tração 4x4,enqanto alguns carros de traçao dianteira (d) rodaram em mais de 30 cidades.Os carros de traçao traseira (t) que  tem cilindradas de 4 at é o 7,mesmo sendo maiores rodaram poucas cidades.
+
 ## 2. Gráfico de linhas
 
 O *dataset* usado é o `co2_tidy`, onde iremos observar a média de CO2 dentre desse período de 1959 até 1997.
